@@ -110,7 +110,7 @@ export default function RegionSection({ region, index, variant = "full" }: Regio
 
           {/* Description — shorter for half variant */}
           <p
-            className={`animate-in font-body text-sm leading-relaxed max-w-xl opacity-80 ${isHalf ? "mb-3 sm:mb-4 line-clamp-2 lg:line-clamp-none" : "mb-4 sm:mb-6 sm:text-base"
+            className={`animate-in font-body text-sm leading-relaxed max-w-xl opacity-80 ${isHalf ? "mb-3 sm:mb-4" : "mb-4 sm:mb-6 sm:text-base"
               }`}
             style={{ color: region.textColor }}
           >
