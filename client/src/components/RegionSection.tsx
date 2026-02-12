@@ -16,56 +16,26 @@ const REGION_IMAGES: Record<string, string> = {
 interface RegionSectionProps {
   region: TripRegion;
   index: number;
+  variant?: "half" | "full";
 }
 
-export default function RegionSection({ region, index }: RegionSectionProps) {
+// Compact region card: used in both half-page pairs and full-page solo
+export default function RegionSection({ region, index, variant = "full" }: RegionSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const imageRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Only pin on large screens
-    const mm = gsap.matchMedia();
-
-    mm.add("(min-width: 1024px)", () => {
-      const ctx = gsap.context(() => {
-        // Pin the image while content scrolls over it
-        ScrollTrigger.create({
-          trigger: sectionRef.current,
-          start: "top top",
-          end: "bottom bottom",
-          pin: imageRef.current,
-          pinSpacing: false,
-        });
-
-        // Parallax on the image
-        gsap.to(`.region-img-${region.id}`, {
-          scale: 1.08,
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: 1.5,
-          },
-        });
-      }, sectionRef);
-
-      return () => ctx.revert();
-    });
-
-    // Animate content elements on all screen sizes
-    const ctx2 = gsap.context(() => {
-      const items = contentRef.current?.querySelectorAll(".animate-in");
+    const ctx = gsap.context(() => {
+      const items = sectionRef.current?.querySelectorAll(".animate-in");
       if (items) {
         items.forEach((item) => {
           gsap.from(item, {
-            y: 60,
+            y: 30,
             opacity: 0,
-            duration: 0.8,
+            duration: 0.6,
             ease: "power2.out",
             scrollTrigger: {
               trigger: item,
-              start: "top 85%",
+              start: "top 90%",
               toggleActions: "play none none reverse",
             },
           });
@@ -73,175 +43,149 @@ export default function RegionSection({ region, index }: RegionSectionProps) {
       }
     }, sectionRef);
 
-    return () => {
-      mm.revert();
-      ctx2.revert();
-    };
+    return () => ctx.revert();
   }, [region.id]);
 
-  const isEven = index % 2 === 0;
   const imgSrc = REGION_IMAGES[region.id] || "";
+  const isHalf = variant === "half";
 
   return (
-    <section
+    <div
       ref={sectionRef}
-      className="relative min-h-screen lg:min-h-[200vh]"
+      className={`relative overflow-hidden ${isHalf ? "min-h-[50vh] lg:h-[50vh]" : "min-h-[50vh]"
+        }`}
       style={{ backgroundColor: region.bgColor }}
     >
-      {/* Image — full width on mobile, half on desktop */}
-      <div
-        ref={imageRef}
-        className={`relative lg:absolute lg:top-0 ${isEven ? "lg:left-0" : "lg:right-0"} w-full lg:w-1/2 h-[50vh] lg:h-screen overflow-hidden`}
-      >
-        <div className={`region-img-${region.id} w-full h-full`}>
-          <img
-            src={imgSrc}
-            alt={region.name}
-            className="w-full h-full object-cover"
-            loading="lazy"
-          />
-          {/* Desktop gradient fade */}
-          <div
-            className="absolute inset-0 hidden lg:block"
-            style={{
-              background: isEven
-                ? `linear-gradient(to right, transparent 40%, ${region.bgColor})`
-                : `linear-gradient(to left, transparent 40%, ${region.bgColor})`,
-            }}
-          />
-          <div
-            className="absolute inset-0 hidden lg:block"
-            style={{
-              background: `linear-gradient(to bottom, ${region.bgColor} 0%, transparent 15%, transparent 85%, ${region.bgColor} 100%)`,
-            }}
-          />
-          {/* Mobile gradient fade */}
-          <div
-            className="absolute inset-0 lg:hidden"
-            style={{
-              background: `linear-gradient(to bottom, transparent 40%, ${region.bgColor})`,
-            }}
-          />
-        </div>
-
-        {/* Day Counter - pinned with image */}
-        <div className={`absolute top-1/2 -translate-y-1/2 ${isEven ? "right-4 lg:right-16" : "left-4 lg:left-16"}`}>
-          <div className="font-counter text-[80px] sm:text-[120px] lg:text-[200px] leading-none opacity-10" style={{ color: region.textColor }}>
-            {String(region.stops[0]?.day || 0).padStart(2, "0")}
-          </div>
-        </div>
+      {/* Background image — fills the whole area */}
+      <div className="absolute inset-0">
+        <img
+          src={imgSrc}
+          alt={region.name}
+          className="w-full h-full object-cover"
+          loading="lazy"
+        />
+        {/* Dark overlay */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `linear-gradient(to right, ${region.bgColor}ee ${isHalf ? "50%" : "45%"}, ${region.bgColor}99 100%)`,
+          }}
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `linear-gradient(to bottom, ${region.bgColor}40 0%, ${region.bgColor}cc 100%)`,
+          }}
+        />
       </div>
 
-      {/* Scrolling Content Half */}
-      <div
-        ref={contentRef}
-        className={`relative z-10 ${isEven ? "lg:ml-auto" : "lg:mr-auto"} w-full lg:w-1/2 min-h-screen`}
-      >
-        {/* Spacer for first viewport on desktop */}
-        <div className="hidden lg:block h-[30vh]" />
-
-        {/* Region Header */}
-        <div className="px-4 sm:px-6 lg:px-16 py-8">
-          <div className="animate-in flex items-center gap-3 mb-4">
-            <div className="w-10 h-[2px]" style={{ backgroundColor: region.accentColor }} />
-            <span className="font-mono-custom text-xs tracking-[0.2em] uppercase" style={{ color: region.accentColor }}>
+      {/* Content */}
+      <div className={`relative z-10 h-full flex flex-col justify-start pt-6 sm:pt-8 lg:justify-center px-4 sm:px-8 lg:px-12 py-6 sm:py-8 lg:py-10
+        `}>
+        <div className="max-w-5xl mx-auto w-full">
+          {/* Header row: chapter tag + stats */}
+          <div className="animate-in flex items-center gap-3 mb-2 sm:mb-3">
+            <div className="w-8 h-[2px]" style={{ backgroundColor: region.accentColor }} />
+            <span className="font-mono-custom text-[10px] sm:text-xs tracking-[0.2em] uppercase" style={{ color: region.accentColor }}>
               Chapter {index + 1}
             </span>
           </div>
 
-          <h2
-            className="animate-in font-display font-extrabold text-3xl sm:text-4xl lg:text-6xl leading-[0.95] mb-3"
-            style={{ color: region.textColor }}
-          >
-            {region.name}
-          </h2>
+          {/* Title + subtitle */}
+          <div className="animate-in flex flex-col sm:flex-row sm:items-baseline sm:gap-4 mb-2 sm:mb-3">
+            <h2
+              className={`font-display font-extrabold leading-[0.95] ${isHalf ? "text-2xl sm:text-3xl lg:text-4xl" : "text-3xl sm:text-4xl lg:text-6xl"
+                }`}
+              style={{ color: region.textColor }}
+            >
+              {region.name}
+            </h2>
+            <p
+              className="font-display text-sm sm:text-base lg:text-lg font-medium mt-1 sm:mt-0"
+              style={{ color: region.accentColor }}
+            >
+              {region.subtitle}
+            </p>
+          </div>
+
+          {/* Description — shorter for half variant */}
           <p
-            className="animate-in font-display text-base sm:text-lg lg:text-xl font-medium mb-6"
-            style={{ color: region.accentColor }}
-          >
-            {region.subtitle}
-          </p>
-          <p
-            className="animate-in font-body text-sm sm:text-base lg:text-lg leading-relaxed max-w-lg opacity-80"
+            className={`animate-in font-body text-sm leading-relaxed max-w-xl opacity-80 ${isHalf ? "mb-3 sm:mb-4 line-clamp-2 lg:line-clamp-none" : "mb-4 sm:mb-6 sm:text-base"
+              }`}
             style={{ color: region.textColor }}
           >
             {region.description}
           </p>
 
-          {/* Stats */}
-          <div className="animate-in flex gap-6 sm:gap-8 mt-6 sm:mt-8 mb-8 sm:mb-12">
+          {/* Stats row */}
+          <div className="animate-in flex gap-4 sm:gap-6 mb-3 sm:mb-4">
             {region.stats.map((stat) => (
               <div key={stat.label}>
-                <div className="font-counter text-xl sm:text-2xl lg:text-3xl" style={{ color: region.accentColor }}>
+                <div className={`font-counter ${isHalf ? "text-lg sm:text-xl" : "text-xl sm:text-2xl lg:text-3xl"}`} style={{ color: region.accentColor }}>
                   {stat.value}
                 </div>
-                <div className="font-mono-custom text-[10px] uppercase tracking-wider opacity-50" style={{ color: region.textColor }}>
+                <div className="font-mono-custom text-[9px] sm:text-[10px] uppercase tracking-wider opacity-50" style={{ color: region.textColor }}>
                   {stat.label}
                 </div>
               </div>
             ))}
           </div>
-        </div>
 
-        {/* Stop Cards */}
-        <div className="px-4 sm:px-6 lg:px-16 pb-12 lg:pb-16 space-y-3 sm:space-y-4">
-          {region.stops.map((stop, i) => {
-            const uniqueKey = `${stop.day}-${stop.place}`;
-            const isFirst = i === 0;
-            const isLast = i === region.stops.length - 1;
-            return (
-              <div
-                key={uniqueKey}
-                className="animate-in group relative"
-              >
-                <div
-                  className="flex items-start gap-3 sm:gap-4 p-3 sm:p-5 rounded-xl transition-all duration-300 hover:scale-[1.02]"
-                  style={{
-                    backgroundColor: `${region.textColor}08`,
-                    borderLeft: `3px solid ${isFirst || isLast ? region.accentColor : `${region.textColor}15`}`,
-                  }}
-                >
-                  {/* Day Number */}
-                  <div className="shrink-0 w-10 sm:w-12 text-center">
-                    <div className="font-counter text-xl sm:text-2xl leading-none" style={{ color: region.accentColor }}>
-                      {String(stop.day).padStart(2, "0")}
-                    </div>
-                    <div className="font-mono-custom text-[9px] uppercase tracking-wider opacity-40 mt-0.5" style={{ color: region.textColor }}>
-                      Day
-                    </div>
-                  </div>
-
-                  {/* Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="font-display font-bold text-sm sm:text-lg" style={{ color: region.textColor }}>
-                      {stop.place}
-                    </div>
-                    <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                      <span className="font-mono-custom text-[11px] sm:text-xs opacity-50" style={{ color: region.textColor }}>
-                        {stop.date} · {stop.dayOfWeek}
-                      </span>
-                      <span className="font-mono-custom text-[11px] sm:text-xs opacity-30" style={{ color: region.textColor }}>
-                        · {stop.state}
-                      </span>
-                    </div>
-                    {stop.notes && (
-                      <div
-                        className="font-body text-[11px] sm:text-xs mt-1.5 px-2 py-0.5 rounded-full inline-block"
-                        style={{ backgroundColor: `${region.accentColor}20`, color: region.accentColor }}
-                      >
-                        {stop.notes}
+          {/* Stop Cards — Horizontal Scroll Strip */}
+          <div className="animate-in">
+            <div
+              className="flex gap-2 sm:gap-3 overflow-x-auto pb-2 snap-x snap-mandatory"
+              style={{
+                scrollbarColor: `${region.accentColor}40 transparent`,
+                scrollbarWidth: "thin",
+              }}
+            >
+              {region.stops.map((stop, i) => {
+                const uniqueKey = `${stop.day}-${stop.place}`;
+                const isFirst = i === 0;
+                const isLast = i === region.stops.length - 1;
+                return (
+                  <div
+                    key={uniqueKey}
+                    className="snap-start shrink-0 group relative rounded-lg transition-all duration-300 hover:scale-[1.03]"
+                    style={{
+                      backgroundColor: `${region.textColor}0a`,
+                      borderBottom: `2px solid ${isFirst || isLast ? region.accentColor : `${region.textColor}15`}`,
+                      minWidth: isHalf ? "110px" : "130px",
+                      maxWidth: isHalf ? "140px" : "160px",
+                    }}
+                  >
+                    <div className={`${isHalf ? "p-2 sm:p-3" : "p-3 sm:p-4"}`}>
+                      <div className="flex items-baseline gap-1 mb-1">
+                        <div className={`font-counter leading-none ${isHalf ? "text-base sm:text-lg" : "text-lg sm:text-xl"}`} style={{ color: region.accentColor }}>
+                          {String(stop.day).padStart(2, "0")}
+                        </div>
+                        <div className="font-mono-custom text-[8px] uppercase tracking-wider opacity-40" style={{ color: region.textColor }}>
+                          Day
+                        </div>
                       </div>
-                    )}
+                      <div className={`font-display font-bold leading-tight ${isHalf ? "text-xs sm:text-sm" : "text-sm sm:text-base"}`} style={{ color: region.textColor }}>
+                        {stop.place}
+                      </div>
+                      <div className="font-mono-custom text-[9px] sm:text-[10px] opacity-50 mt-0.5" style={{ color: region.textColor }}>
+                        {stop.date} · {stop.dayOfWeek}
+                      </div>
+                      {stop.notes && (
+                        <div
+                          className="font-body text-[9px] mt-1 px-1.5 py-0.5 rounded-full inline-block"
+                          style={{ backgroundColor: `${region.accentColor}20`, color: region.accentColor }}
+                        >
+                          {stop.notes}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </div>
-            );
-          })}
+                );
+              })}
+            </div>
+          </div>
         </div>
-
-        {/* Spacer for last viewport on desktop */}
-        <div className="hidden lg:block h-[20vh]" />
       </div>
-    </section>
+    </div>
   );
 }

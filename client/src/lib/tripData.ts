@@ -36,7 +36,7 @@ export const TRIP_STATS = {
 
 export const TEAM_MEMBERS = [
   {
-    name: "Devara Dasimayya",
+    name: "Rasik",
     role: "Lead Navigator & Vlogger",
     emoji: "🎬",
     bio: "Full-stack dev who maps routes better than Google",

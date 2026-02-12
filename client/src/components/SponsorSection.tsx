@@ -79,16 +79,15 @@ export default function SponsorSection() {
           {SPONSOR_CATEGORIES.map((cat, i) => (
             <div
               key={cat.title}
-              className={`group relative p-6 sm:p-8 rounded-2xl border transition-all duration-700 ${
-                cat.highlight
-                  ? "border-[#FFB800]/30 bg-[#FFB800]/[0.05] hover:bg-[#FFB800]/[0.08]"
-                  : "border-white/[0.08] bg-white/[0.03] hover:bg-white/[0.06]"
-              } ${isInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`}
+              className={`group relative overflow-visible p-6 sm:p-8 rounded-2xl border transition-all duration-700 ${cat.highlight
+                ? "border-[#FFB800]/30 bg-[#FFB800]/[0.05] hover:bg-[#FFB800]/[0.08]"
+                : "border-white/[0.08] bg-white/[0.03] hover:bg-white/[0.06]"
+                } ${isInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`}
               style={{ transitionDelay: `${200 + i * 150}ms` }}
             >
               {/* Popular badge for title sponsor */}
               {cat.highlight && (
-                <div className="absolute -top-3 left-6 px-3 py-1 rounded-full bg-gradient-to-r from-[#FFB800] to-[#E8712B] text-[#0A0A0A] font-mono-custom text-[10px] font-bold uppercase tracking-wider">
+                <div className="absolute -top-3 left-6 z-10 px-3 py-1 rounded-full bg-gradient-to-r from-[#FFB800] to-[#E8712B] text-[#0A0A0A] font-mono-custom text-[10px] font-bold uppercase tracking-wider">
                   Most Popular
                 </div>
               )}

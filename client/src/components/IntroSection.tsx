@@ -113,11 +113,13 @@ export default function IntroSection() {
           ))}
         </div>
 
-        {/* Budget Breakdown */}
+        {/* Budget — Breakdown + Self vs Sponsored Slider */}
         <div className="budget-card mt-16 sm:mt-20 p-6 sm:p-8 rounded-2xl border border-white/[0.06] bg-white/[0.02]">
           <div className="font-mono-custom text-xs text-[#FFB800] tracking-[0.2em] uppercase mb-6">
             Budget Breakdown
           </div>
+
+          {/* Category breakdown */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
             {[
               { label: "Fuel", value: "₹80K", pct: "15%" },
@@ -141,13 +143,54 @@ export default function IntroSection() {
               </div>
             ))}
           </div>
+
+          {/* Total */}
           <div className="mt-6 pt-4 border-t border-white/[0.06] flex items-baseline justify-between">
             <span className="font-body text-sm text-white/40">Total Budget</span>
-            <span className="font-counter text-2xl sm:text-3xl text-[#FFB800]">₹5,30,000</span>
+            <span className="font-counter text-2xl sm:text-3xl text-[#FFB800]">₹5,30,200</span>
           </div>
-          <div className="flex items-baseline justify-between mt-1">
-            <span className="font-body text-sm text-white/40">Per Person</span>
-            <span className="font-counter text-lg text-white/60">₹1,32,500</span>
+
+          {/* Self vs Sponsored Slider */}
+          <div className="mt-6 pt-5 border-t border-white/[0.06]">
+            <div className="font-mono-custom text-[10px] text-white/40 tracking-[0.15em] uppercase mb-3">
+              Funding Source
+            </div>
+            <div className="relative mb-4">
+              <div className="w-full h-2.5 rounded-full bg-white/[0.06] overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-[#FFB800] to-[#E8712B]"
+                  style={{ width: "100%" }}
+                />
+              </div>
+              <div className="flex justify-between mt-1.5">
+                <div>
+                  <span className="font-counter text-sm text-[#FFB800]">₹5,30,200</span>
+                  <span className="font-mono-custom text-[9px] text-white/30 ml-1.5">Self</span>
+                </div>
+                <div>
+                  <span className="font-counter text-sm text-white/20">₹0</span>
+                  <span className="font-mono-custom text-[9px] text-white/20 ml-1.5">Sponsored</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Sponsor CTA */}
+            <a
+              href="#sponsors"
+              className="group flex items-center justify-between p-3 sm:p-4 rounded-xl border border-[#FFB800]/20 bg-gradient-to-r from-[#FFB800]/[0.06] to-transparent hover:from-[#FFB800]/[0.12] transition-all duration-300"
+            >
+              <div>
+                <div className="font-display font-bold text-sm sm:text-base text-white/90">
+                  Want to increase brand visibility?
+                </div>
+                <div className="font-body text-[11px] sm:text-xs text-[#FFB800]/70 mt-0.5">
+                  Reach 50K+ engaged viewers across India
+                </div>
+              </div>
+              <div className="shrink-0 ml-3 sm:ml-4 px-3 sm:px-4 py-2 rounded-lg bg-gradient-to-r from-[#FFB800] to-[#E8712B] font-mono-custom text-[10px] sm:text-xs font-bold text-[#0A0A0A] uppercase tracking-wider group-hover:scale-105 transition-transform whitespace-nowrap">
+                Become a Sponsor →
+              </div>
+            </a>
           </div>
         </div>
       </div>

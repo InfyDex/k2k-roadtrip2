@@ -60,11 +60,30 @@ export default function Home() {
       {/* Intro / Journey Overview */}
       <IntroSection />
 
-      {/* Region Sections — the scrollytelling core */}
+      {/* Region Sections — paired half-page layout */}
       <div id="regions">
-        {REGIONS.map((region, index) => (
-          <RegionSection key={region.id} region={region} index={index} />
-        ))}
+        {/* Pair 1: North + West Coast — each takes half the viewport */}
+        <div className="lg:h-screen lg:flex lg:flex-col lg:snap-start">
+          <div className="lg:flex-1 lg:min-h-0">
+            <RegionSection region={REGIONS[0]} index={0} variant="half" />
+          </div>
+          <div className="lg:flex-1 lg:min-h-0">
+            <RegionSection region={REGIONS[1]} index={1} variant="half" />
+          </div>
+        </div>
+
+        {/* Pair 2: Deep South + East Coast */}
+        <div className="lg:h-screen lg:flex lg:flex-col lg:snap-start">
+          <div className="lg:flex-1 lg:min-h-0">
+            <RegionSection region={REGIONS[2]} index={2} variant="half" />
+          </div>
+          <div className="lg:flex-1 lg:min-h-0">
+            <RegionSection region={REGIONS[3]} index={3} variant="half" />
+          </div>
+        </div>
+
+        {/* Solo: The Return — compact card like the others */}
+        <RegionSection region={REGIONS[4]} index={4} variant="half" />
       </div>
 
       {/* Route Map */}

@@ -88,7 +88,7 @@ export default function HeroSection() {
       </div>
 
       {/* Content */}
-      <div className="hero-content relative z-10 h-full flex flex-col justify-end pb-16 sm:pb-24 px-4 sm:px-8 lg:px-16">
+      <div className="hero-content relative z-10 h-full flex flex-col justify-end pb-24 sm:pb-24 px-4 sm:px-8 lg:px-16">
         <div className="max-w-5xl">
           {/* Tag */}
           <div className="flex items-center gap-3 mb-4 sm:mb-6">
@@ -139,18 +139,18 @@ export default function HeroSection() {
             ))}
           </div>
         </div>
+      </div>
 
-        {/* Scroll Indicator */}
-        <div
-          ref={scrollIndicatorRef}
-          className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-        >
-          <span className="font-mono-custom text-[10px] text-white/30 tracking-[0.3em] uppercase">
-            Scroll to drive
-          </span>
-          <div className="w-5 h-8 border border-white/20 rounded-full flex justify-center pt-1.5">
-            <div className="w-1 h-2 bg-[#FFB800] rounded-full animate-bounce" />
-          </div>
+      {/* Scroll Indicator — outside hero-content to avoid overlap */}
+      <div
+        ref={scrollIndicatorRef}
+        className="absolute z-20 bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+      >
+        <span className="font-mono-custom text-[10px] text-white/30 tracking-[0.3em] uppercase">
+          Scroll to drive
+        </span>
+        <div className="w-5 h-8 border border-white/20 rounded-full flex justify-center pt-1.5">
+          <div className="w-1 h-2 bg-[#FFB800] rounded-full animate-bounce" />
         </div>
       </div>
     </section>
