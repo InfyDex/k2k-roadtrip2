@@ -124,7 +124,7 @@ export default function SponsorSection() {
 
               {/* CTA */}
               <button
-                onClick={() => toast("Email us at hello@k2kroadtrip.com for sponsorship details!")}
+                onClick={() => toast("Email us at hello@k2ktravel.in for sponsorship details!")}
                 className="mt-8 w-full py-3 rounded-xl font-display font-bold text-sm transition-all duration-300 hover:scale-[1.02] hover:brightness-110"
                 style={{
                   backgroundColor: `${cat.color}20`,
