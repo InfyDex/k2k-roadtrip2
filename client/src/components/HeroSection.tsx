@@ -75,7 +75,7 @@ export default function HeroSection() {
     <section
       id="hero"
       ref={sectionRef}
-      className="relative h-[100vh] min-h-[600px] overflow-hidden"
+      className="relative h-[100dvh] min-h-[600px] overflow-hidden"
     >
       {/* Background Image */}
       <div className="hero-image absolute inset-0">
