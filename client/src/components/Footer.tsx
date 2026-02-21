@@ -1,7 +1,7 @@
 import { useWebConfig } from "../contexts/WebConfigContext";
 
 export default function Footer() {
-  const { footerDateRange } = useWebConfig();
+  const { footerDateRange, enableSupportJourney } = useWebConfig();
   return (
     <footer className="relative bg-[#050505] border-t border-white/[0.04] py-12 sm:py-16">
       <div className="max-w-6xl mx-auto px-4 sm:px-8">
@@ -23,7 +23,7 @@ export default function Footer() {
 
           {/* Links */}
           <div className="flex items-center gap-6">
-            {["Journey", "Route", "Team", "Sponsors"].map((link) => (
+            {["Journey", "Route", "Team", ...(enableSupportJourney ? ["Sponsors"] : [])].map((link) => (
               <button
                 key={link}
                 onClick={() =>

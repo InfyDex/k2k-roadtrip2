@@ -36,29 +36,26 @@ export const TRIP_STATS = {
 
 export const TEAM_MEMBERS = [
   {
-    name: "Rasik",
+    name: "Sankalp",
     role: "Lead Navigator & Vlogger",
     emoji: "🎬",
     bio: "Full-stack dev who maps routes better than Google",
   },
   {
-    name: "Sankalp",
+    name: "Rasik",
     role: "Cinematographer",
-    gear: "Tripod",
     emoji: "📷",
     bio: "Turns every sunset into a cinematic masterpiece",
   },
   {
     name: "Anwar",
     role: "Driver & Mechanic",
-    gear: "Jump Starter",
     emoji: "🚗",
     bio: "Can fix anything with duct tape and determination",
   },
   {
     name: "Puneet",
     role: "Sound & Music",
-    gear: "Speaker",
     emoji: "🎵",
     bio: "Creates the perfect playlist for every terrain",
   },

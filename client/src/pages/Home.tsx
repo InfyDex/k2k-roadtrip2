@@ -24,10 +24,13 @@ import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
 import ProgressIndicator from "@/components/ProgressIndicator";
 import { REGIONS } from "@/lib/tripData";
+import { useWebConfig } from "@/contexts/WebConfigContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
+  const { enableSupportJourney } = useWebConfig();
+
   useEffect(() => {
     // Initialize Lenis smooth scroll
     const lenis = new Lenis({
@@ -96,7 +99,7 @@ export default function Home() {
       <ContentStrategy />
 
       {/* Sponsors */}
-      <SponsorSection />
+      {enableSupportJourney && <SponsorSection />}
 
       {/* CTA */}
       <CTASection />

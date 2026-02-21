@@ -7,6 +7,7 @@ interface WebConfig {
     journeyDate: string;
     postTripDate: string;
     footerDateRange: string;
+    enableSupportJourney: boolean;
 }
 
 const defaultConfig: WebConfig = {
@@ -16,6 +17,7 @@ const defaultConfig: WebConfig = {
     journeyDate: "Mar 23 — Apr 28",
     postTripDate: "May 2026+",
     footerDateRange: "March — May 2026",
+    enableSupportJourney: true,
 };
 
 const WebConfigContext = createContext<WebConfig>(defaultConfig);

@@ -2,7 +2,8 @@
     "tripStartDate": "",
     "heroDateRange": "Dates TBD",
     "preTripDate": "Feb — Mar 2026",
-    "journeyDate": "Dates TBD",
+    "journeyDate": "Mar 23 — Apr 28",
     "postTripDate": "Dates TBD",
-    "footerDateRange": "Dates TBD"
+    "footerDateRange": "Dates TBD",
+    "enableSupportJourney": false
 }
