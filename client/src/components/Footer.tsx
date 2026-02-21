@@ -1,4 +1,7 @@
+import { useWebConfig } from "../contexts/WebConfigContext";
+
 export default function Footer() {
+  const { footerDateRange } = useWebConfig();
   return (
     <footer className="relative bg-[#050505] border-t border-white/[0.04] py-12 sm:py-16">
       <div className="max-w-6xl mx-auto px-4 sm:px-8">
@@ -36,7 +39,7 @@ export default function Footer() {
           {/* Credits */}
           <div className="font-mono-custom text-[10px] text-white/20 text-center sm:text-right">
             <div>Built with passion by 4 engineers</div>
-            <div className="mt-0.5">March — May 2026</div>
+            <div className="mt-0.5">{footerDateRange || "Coming Soon"}</div>
           </div>
         </div>
 

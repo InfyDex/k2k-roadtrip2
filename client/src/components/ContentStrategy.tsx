@@ -29,7 +29,7 @@ const PLATFORMS = [
     name: "Blog",
     icon: "✍",
     color: "#FFB800",
-    content: "In-depth travel guides, budget breakdowns",
+    content: "In-depth travel guides and route planning",
     target: "SEO-optimized",
     format: "Long-form",
   },
@@ -41,7 +41,7 @@ const CONTENT_TYPES = [
   { type: "Instagram Reels", freq: "2x Daily", desc: "Trending audio + stunning visuals" },
   { type: "Behind the Scenes", freq: "Daily", desc: "Raw, unfiltered moments" },
   { type: "Sponsor Features", freq: "Per deal", desc: "Authentic product integration" },
-  { type: "Travel Guides", freq: "Weekly", desc: "Budget tips, route guides, reviews" },
+  { type: "Travel Guides", freq: "Weekly", desc: "Route guides, itinerary planning, reviews" },
 ];
 
 export default function ContentStrategy() {
@@ -122,9 +122,8 @@ export default function ContentStrategy() {
             {CONTENT_TYPES.map((item, i) => (
               <div
                 key={item.type}
-                className={`grid grid-cols-3 gap-4 px-5 sm:px-6 py-4 ${
-                  i < CONTENT_TYPES.length - 1 ? "border-b border-white/[0.05]" : ""
-                } hover:bg-white/[0.03] transition-all duration-500 ${isInView ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-6"}`}
+                className={`grid grid-cols-3 gap-4 px-5 sm:px-6 py-4 ${i < CONTENT_TYPES.length - 1 ? "border-b border-white/[0.05]" : ""
+                  } hover:bg-white/[0.03] transition-all duration-500 ${isInView ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-6"}`}
                 style={{ transitionDelay: `${600 + i * 80}ms` }}
               >
                 <div className="font-display font-bold text-sm text-white/90">{item.type}</div>

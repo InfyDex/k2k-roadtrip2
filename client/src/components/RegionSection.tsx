@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { TripRegion } from "@/lib/tripData";
+import { useWebConfig } from "../contexts/WebConfigContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -22,6 +23,7 @@ interface RegionSectionProps {
 // Compact region card: used in both half-page pairs and full-page solo
 export default function RegionSection({ region, index, variant = "full" }: RegionSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const { tripStartDate } = useWebConfig();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -144,6 +146,23 @@ export default function RegionSection({ region, index, variant = "full" }: Regio
                 const uniqueKey = `${stop.day}-${stop.place}`;
                 const isFirst = i === 0;
                 const isLast = i === region.stops.length - 1;
+
+                // Calculate dynamic date based on tripStartDate and stop.day
+                // Treat the configured date as a local midnight timestamp to avoid timezone shifts
+                const hasValidDate = tripStartDate && tripStartDate.trim() !== "";
+                let stopDateStr = "TBD";
+                let stopDayOfWeek = "TBD";
+
+                if (hasValidDate) {
+                  const startDateObj = new Date(`${tripStartDate}T12:00:00`);
+                  if (!isNaN(startDateObj.getTime())) {
+                    const stopDateObj = new Date(startDateObj);
+                    stopDateObj.setDate(startDateObj.getDate() + stop.day - 1);
+                    stopDateStr = stopDateObj.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+                    stopDayOfWeek = stopDateObj.toLocaleDateString("en-US", { weekday: "short" });
+                  }
+                }
+
                 return (
                   <div
                     key={uniqueKey}
@@ -168,7 +187,7 @@ export default function RegionSection({ region, index, variant = "full" }: Regio
                         {stop.place}
                       </div>
                       <div className="font-mono-custom text-[9px] sm:text-[10px] opacity-50 mt-0.5" style={{ color: region.textColor }}>
-                        {stop.date} · {stop.dayOfWeek}
+                        {hasValidDate ? `${stopDateStr} · ${stopDayOfWeek}` : "Dates TBD"}
                       </div>
                       {stop.notes && (
                         <div

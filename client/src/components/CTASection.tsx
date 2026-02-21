@@ -56,7 +56,7 @@ export default function CTASection() {
             Want to sponsor this journey?
           </p>
           <button
-            onClick={() => toast("Email us at hello@k2kroadtrip.com")}
+            onClick={() => toast("Email us at hello@k2ktravel.in")}
             className="font-display font-bold text-base px-8 py-3.5 bg-gradient-to-r from-[#FFB800] to-[#E8712B] text-[#0A0A0A] rounded-full hover:scale-105 transition-transform shadow-lg shadow-[#FFB800]/20"
           >
             Become a Sponsor

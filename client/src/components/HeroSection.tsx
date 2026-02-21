@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useWebConfig } from "../contexts/WebConfigContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -12,6 +13,8 @@ export default function HeroSection() {
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const statsRef = useRef<HTMLDivElement>(null);
   const scrollIndicatorRef = useRef<HTMLDivElement>(null);
+
+  const { heroDateRange } = useWebConfig();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -94,7 +97,7 @@ export default function HeroSection() {
           <div className="flex items-center gap-3 mb-4 sm:mb-6">
             <div className="w-12 h-[2px] bg-[#FFB800]" />
             <span className="font-mono-custom text-xs sm:text-sm text-[#FFB800] tracking-[0.2em] uppercase">
-              March 23 — May 2, 2026
+              {heroDateRange || "Coming Soon"}
             </span>
           </div>
 

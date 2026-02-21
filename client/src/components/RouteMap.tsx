@@ -211,7 +211,6 @@ export default function RouteMap() {
                 { value: "37", label: "Travel Days", icon: "📅" },
                 { value: "15+", label: "States & UTs", icon: "🗺️" },
                 { value: "8K+", label: "Kilometers", icon: "🛣️" },
-                { value: "₹5.3L", label: "Total Budget", icon: "💰" },
               ].map((stat, i) => (
                 <div
                   key={stat.label}
