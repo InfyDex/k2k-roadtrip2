@@ -5,5 +5,5 @@
     "journeyDate": "Dates TBD",
     "postTripDate": "Dates TBD",
     "footerDateRange": "Dates TBD",
-    "enableSupportJourney": false
+    "enableSupportJourney": true
 }
