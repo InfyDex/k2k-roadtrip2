@@ -1,9 +1,9 @@
 {
-    "tripStartDate": "2026-03-23",
-    "heroDateRange": "March 23 — May 2, 2026",
-    "preTripDate": "Feb - Mar 2026",
-    "journeyDate": "Mar 23 — Apr 28",
-    "postTripDate": "May 2026+",
-    "footerDateRange": "March — May 2026",
+    "tripStartDate": "2026-08-29",
+    "heroDateRange": "August 29 — October 10, 2026",
+    "preTripDate": "August - August 2026",
+    "journeyDate": "August 29 — October 10",
+    "postTripDate": "October 2026+",
+    "footerDateRange": "August — October 2026",
     "enableSupportJourney": false
 }
