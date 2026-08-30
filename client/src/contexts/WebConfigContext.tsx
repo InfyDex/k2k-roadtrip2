@@ -11,12 +11,12 @@ interface WebConfig {
 }
 
 const defaultConfig: WebConfig = {
-    tripStartDate: "2026-03-23",
-    heroDateRange: "March 23 — May 2, 2026",
-    preTripDate: "Feb — Mar 2026",
-    journeyDate: "Mar 23 — Apr 28",
-    postTripDate: "May 2026+",
-    footerDateRange: "March — May 2026",
+    tripStartDate: "2026-08-28",
+    heroDateRange: "August 28 — October 7, 2026",
+    preTripDate: "Jul — Aug 2026",
+    journeyDate: "Aug 28 — Oct 3",
+    postTripDate: "October 2026+",
+    footerDateRange: "August — October 2026",
     enableSupportJourney: true,
 };
 
