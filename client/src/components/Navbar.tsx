@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
-import { useWebConfig } from "../contexts/WebConfigContext";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const { enableSupportJourney } = useWebConfig();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 80);
@@ -38,7 +36,7 @@ export default function Navbar() {
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-6 lg:gap-8">
-            {["journey", "route", "team", ...(enableSupportJourney ? ["sponsors"] : [])].map((item) => (
+            {["journey", "route", "team"].map((item) => (
               <button
                 key={item}
                 onClick={() => scrollTo(item)}
@@ -57,7 +55,7 @@ export default function Navbar() {
 
           {/* Mobile — key links always visible */}
           <div className="flex md:hidden items-center gap-1">
-            {["journey", "route", "team", ...(enableSupportJourney ? ["sponsors"] : [])].map((item) => (
+            {["journey", "route", "team"].map((item) => (
               <button
                 key={item}
                 onClick={() => scrollTo(item)}

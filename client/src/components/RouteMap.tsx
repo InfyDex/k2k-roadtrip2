@@ -3,6 +3,8 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useInView } from "@/hooks/useInView";
 import { ALL_STOPS } from "@/lib/tripData";
+import { useWebConfig } from "../contexts/WebConfigContext";
+import { getCurrentStop } from "@/lib/tripDates";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -40,6 +42,8 @@ export default function RouteMap() {
   const pathRef = useRef<SVGPathElement>(null);
   const shadowPathRef = useRef<SVGPathElement>(null);
   const pinWrapperRef = useRef<HTMLDivElement>(null);
+  const { tripStartDate } = useWebConfig();
+  const currentStop = getCurrentStop(tripStartDate);
 
   useEffect(() => {
     if (!pathRef.current || !pinWrapperRef.current) return;
@@ -50,27 +54,34 @@ export default function RouteMap() {
     path.style.strokeDasharray = `${length}`;
     path.style.strokeDashoffset = `${length}`;
 
-    // Pin the section and scrub the drawing animation fully within the pinned scroll
     const tween = gsap.to(path, {
       strokeDashoffset: 0,
       ease: "none",
       scrollTrigger: {
         trigger: pinWrapperRef.current,
         start: "top top",
-        end: "+=70%",        // 0.7× viewport — fast enough to not feel stuck
+        end: "+=100%",
         pin: true,
+        pinSpacing: true,
         scrub: 0.8,
-        anticipatePin: 1,
+        invalidateOnRefresh: true,
       },
     });
 
+    const refresh = () => ScrollTrigger.refresh();
+    const raf = requestAnimationFrame(refresh);
+    window.addEventListener("load", refresh);
+
     return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("load", refresh);
+      tween.scrollTrigger?.kill();
       tween.kill();
     };
   }, []);
 
   return (
-    <div ref={pinWrapperRef}>
+    <div ref={pinWrapperRef} className="relative z-0">
       <section
         id="route"
         ref={sectionRef}
@@ -139,7 +150,8 @@ export default function RouteMap() {
                 {/* City Dots & Labels */}
                 {uniqueStops.map((stop, idx) => {
                   const { x, y } = toSVG(stop.lat, stop.lng);
-                  const showLabel = labeledCities.includes(stop.place);
+                  const isCurrent = currentStop?.place === stop.place;
+                  const showLabel = labeledCities.includes(stop.place) || isCurrent;
                   const isStart = stop.place === "Delhi" && stop.day === 1;
                   const isEnd = stop.place === "Kanyakumari";
 
@@ -152,16 +164,22 @@ export default function RouteMap() {
                         transformOrigin: `${x}px ${y}px`,
                       }}
                     >
-                      {(isStart || isEnd) && (
-                        <circle cx={x} cy={y} r="12" fill={isStart ? "#FFB800" : "#E94560"} opacity="0.15" />
+                      {(isStart || isEnd || isCurrent) && (
+                        <circle cx={x} cy={y} r="12" fill={isCurrent ? "#FFB800" : isStart ? "#FFB800" : "#E94560"} opacity="0.15" />
+                      )}
+                      {isCurrent && (
+                        <circle cx={x} cy={y} r="10" fill="none" stroke="#FFB800" strokeWidth="1.5" opacity="0.7">
+                          <animate attributeName="r" values="7;14;7" dur="2s" repeatCount="indefinite" />
+                          <animate attributeName="opacity" values="0.8;0;0.8" dur="2s" repeatCount="indefinite" />
+                        </circle>
                       )}
                       <circle
                         cx={x}
                         cy={y}
-                        r={isStart || isEnd ? 5 : 3}
-                        fill={isStart ? "#FFB800" : isEnd ? "#E94560" : "#FFB800"}
-                        stroke={isStart || isEnd ? "#fff" : "none"}
-                        strokeWidth={isStart || isEnd ? 1.5 : 0}
+                        r={isCurrent || isStart || isEnd ? 5 : 3}
+                        fill={isCurrent ? "#FFB800" : isStart ? "#FFB800" : isEnd ? "#E94560" : "#FFB800"}
+                        stroke={isCurrent || isStart || isEnd ? "#fff" : "none"}
+                        strokeWidth={isCurrent || isStart || isEnd ? 1.5 : 0}
                       />
                       {showLabel && (
                         <text
@@ -169,10 +187,11 @@ export default function RouteMap() {
                           y={y + (y > 300 ? -8 : 4)}
                           textAnchor={x > 300 ? "end" : "start"}
                           className="font-mono-custom"
-                          fill="rgba(255,255,255,0.7)"
+                          fill={isCurrent ? "#FFB800" : "rgba(255,255,255,0.7)"}
                           fontSize="9"
+                          fontWeight={isCurrent ? "bold" : "normal"}
                         >
-                          {stop.place}
+                          {isCurrent ? `${stop.place} · HERE` : stop.place}
                         </text>
                       )}
                     </g>

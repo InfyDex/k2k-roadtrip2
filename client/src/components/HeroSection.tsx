@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useWebConfig } from "../contexts/WebConfigContext";
+import { getCurrentStop, getDayPhotoUrl } from "@/lib/tripDates";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,7 +15,20 @@ export default function HeroSection() {
   const statsRef = useRef<HTMLDivElement>(null);
   const scrollIndicatorRef = useRef<HTMLDivElement>(null);
 
-  const { heroDateRange } = useWebConfig();
+  const { heroDateRange, tripStartDate } = useWebConfig();
+  const currentStop = getCurrentStop(tripStartDate);
+
+  useEffect(() => {
+    if (!currentStop) return;
+    const href = getDayPhotoUrl(currentStop.day);
+    const existing = document.querySelector(`link[rel="preload"][href="${href}"]`);
+    if (existing) return;
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "image";
+    link.href = href;
+    document.head.appendChild(link);
+  }, [currentStop?.day]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -100,6 +114,18 @@ export default function HeroSection() {
               {heroDateRange || "Coming Soon"}
             </span>
           </div>
+
+          {currentStop && (
+            <div className="inline-flex items-center gap-2 mb-4 sm:mb-5 px-3 py-1.5 rounded-full border border-[#FFB800]/40 bg-[#FFB800]/10">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#FFB800] opacity-60" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#FFB800]" />
+              </span>
+              <span className="font-mono-custom text-[10px] sm:text-xs text-[#FFB800] tracking-[0.16em] uppercase">
+                Currently here · {currentStop.place} · Day {String(currentStop.day).padStart(2, "0")}
+              </span>
+            </div>
+          )}
 
           {/* Title */}
           <h1

@@ -150,7 +150,26 @@ function vitePluginManusDebugCollector(): Plugin {
   };
 }
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector()];
+function vitePluginDayPhotoCache(): Plugin {
+  const header = "public, max-age=86400, stale-while-revalidate=604800";
+  const apply = (req: { url?: string }, res: { setHeader: (k: string, v: string) => void }, next: () => void) => {
+    if (req.url?.startsWith("/days/")) {
+      res.setHeader("Cache-Control", header);
+    }
+    next();
+  };
+  return {
+    name: "day-photo-cache",
+    configureServer(server) {
+      server.middlewares.use(apply);
+    },
+    configurePreviewServer(server) {
+      server.middlewares.use(apply);
+    },
+  };
+}
+
+const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector(), vitePluginDayPhotoCache()];
 
 export default defineConfig({
   plugins,
