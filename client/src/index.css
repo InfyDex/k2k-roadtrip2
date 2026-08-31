@@ -90,11 +90,14 @@
   }
   html {
     scroll-behavior: auto;
+    overscroll-behavior-y: none;
+    overflow-anchor: none;
   }
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-body);
     overflow-x: hidden;
+    overscroll-behavior-y: none;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),

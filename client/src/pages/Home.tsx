@@ -24,26 +24,31 @@ import ProgressIndicator from "@/components/ProgressIndicator";
 import { REGIONS } from "@/lib/tripData";
 
 gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.config({ ignoreMobileResize: true });
 
 export default function Home() {
   useEffect(() => {
-    // Initialize Lenis smooth scroll
+    // Desktop mouse only. Android Chrome touch + Lenis snaps the first swipe back up.
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
+      syncTouch: false,
     });
 
-    // Connect Lenis to GSAP ScrollTrigger
-    lenis.on("scroll", ScrollTrigger.update);
-    gsap.ticker.add((time) => {
+    const onTick = (time: number) => {
       lenis.raf(time * 1000);
-    });
+    };
+
+    lenis.on("scroll", ScrollTrigger.update);
+    gsap.ticker.add(onTick);
     gsap.ticker.lagSmoothing(0);
 
     return () => {
       lenis.destroy();
-      gsap.ticker.remove(lenis.raf);
+      gsap.ticker.remove(onTick);
     };
   }, []);
 

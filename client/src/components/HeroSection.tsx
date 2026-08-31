@@ -60,7 +60,9 @@ export default function HeroSection() {
         delay: 1.3,
       });
 
-      // Parallax on scroll
+      // Lagged scrub on touch feels like a rubber-band snap-back.
+      const scrub = window.matchMedia("(pointer: coarse)").matches ? true : 1;
+
       gsap.to(".hero-image", {
         yPercent: 30,
         scale: 1.1,
@@ -68,11 +70,10 @@ export default function HeroSection() {
           trigger: sectionRef.current,
           start: "top top",
           end: "bottom top",
-          scrub: 1,
+          scrub,
         },
       });
 
-      // Fade out content on scroll
       gsap.to(".hero-content", {
         y: -100,
         opacity: 0,
@@ -80,7 +81,7 @@ export default function HeroSection() {
           trigger: sectionRef.current,
           start: "20% top",
           end: "60% top",
-          scrub: 1,
+          scrub,
         },
       });
     }, sectionRef);
@@ -92,7 +93,7 @@ export default function HeroSection() {
     <section
       id="hero"
       ref={sectionRef}
-      className="relative h-[100dvh] min-h-[600px] overflow-hidden"
+      className="relative h-[100svh] min-h-[600px] overflow-hidden"
     >
       {/* Background Image */}
       <div className="hero-image absolute inset-0">
