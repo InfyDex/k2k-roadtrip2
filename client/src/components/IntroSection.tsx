@@ -30,7 +30,7 @@ export default function IntroSection() {
     return () => ctx.revert();
   }, []);
 
-  const statement = "We are four software engineers who decided to trade our keyboards for the open road. 41 days. One car. Every corner of India.";
+  const statement = "We are four software engineers who decided to trade our keyboards for the open road. 42 days. One car. Every corner of India.";
   const words = statement.split(" ");
 
   return (

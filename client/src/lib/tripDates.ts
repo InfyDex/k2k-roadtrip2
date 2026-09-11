@@ -1,7 +1,7 @@
 import { ALL_STOPS, type TripStop } from "./tripData";
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
-const TRIP_LENGTH_DAYS = 41;
+const TRIP_LENGTH_DAYS = 42;
 
 export const LAST_STOP_DAY = Math.max(...ALL_STOPS.map((s) => s.day));
 

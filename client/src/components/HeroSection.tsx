@@ -144,7 +144,7 @@ export default function HeroSection() {
             ref={subtitleRef}
             className="font-body text-base sm:text-lg md:text-xl text-white/70 max-w-xl mb-8 sm:mb-10 leading-relaxed"
           >
-            Four software engineers. One car. 41 days. 8,000+ kilometers across
+            Four software engineers. One car. 42 days. 8,000+ kilometers across
             15+ states. The ultimate Indian road trip.
           </p>
 
@@ -154,7 +154,7 @@ export default function HeroSection() {
             className="flex flex-wrap gap-6 sm:gap-10"
           >
             {[
-              { value: "41", label: "Days" },
+              { value: "42", label: "Days" },
               { value: "15+", label: "States" },
               { value: "8K+", label: "Kilometers" },
               { value: "4", label: "Travelers" },

@@ -227,7 +227,7 @@ export default function RouteMap() {
             {/* Route Stats — vertical stack on the side */}
             <div className="flex flex-row lg:flex-col gap-3 sm:gap-4 flex-wrap justify-center">
               {[
-                { value: "37", label: "Travel Days", icon: "📅" },
+                { value: "38", label: "Travel Days", icon: "📅" },
                 { value: "15+", label: "States & UTs", icon: "🗺️" },
                 { value: "8K+", label: "Kilometers", icon: "🛣️" },
               ].map((stat, i) => (

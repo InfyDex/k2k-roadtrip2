@@ -8,7 +8,7 @@ interface WebConfig {
 
 const defaultConfig: WebConfig = {
     tripStartDate: "2026-08-28",
-    heroDateRange: "August 28 — October 7, 2026",
+    heroDateRange: "August 28 — October 8, 2026",
     footerDateRange: "August — October 2026",
 };
 

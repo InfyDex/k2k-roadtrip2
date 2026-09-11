@@ -46,7 +46,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="mt-8 pt-6 border-t border-white/[0.04] flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="font-mono-custom text-[10px] text-white/15">
-            41 days · 15+ states · 8,000+ km · ∞ memories
+            42 days · 15+ states · 8,000+ km · ∞ memories
           </div>
           <div className="font-mono-custom text-[10px] text-white/15">
             Made in India 🇮🇳
