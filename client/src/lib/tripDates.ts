@@ -27,11 +27,29 @@ export function getStopDate(tripStartDate: string, day: number): Date | null {
   return stop;
 }
 
-/** Bump this when replacing an existing day_N.jpg so browsers fetch the new file. */
-export const DAY_PHOTO_CACHE = "1";
+export function getDayPhotoUrl(day: number, version: string): string {
+  return `/days/day_${day}.jpg?v=${version}`;
+}
 
-export function getDayPhotoUrl(day: number): string {
-  return `/days/day_${day}.jpg?v=${DAY_PHOTO_CACHE}`;
+type DayPhotoManifest = { versions?: Record<string, string> };
+
+let dayPhotoVersionsPromise: Promise<Record<number, string>> | null = null;
+
+/** Fresh list of real day photos. Missing days are placeholders and are never fetched. */
+export function fetchDayPhotoVersions(): Promise<Record<number, string>> {
+  if (!dayPhotoVersionsPromise) {
+    dayPhotoVersionsPromise = fetch("/days/available.json", { cache: "no-store" })
+      .then((res) => (res.ok ? (res.json() as Promise<DayPhotoManifest>) : { versions: {} }))
+      .then((data) => {
+        const versions: Record<number, string> = {};
+        for (const [day, version] of Object.entries(data.versions ?? {})) {
+          versions[Number(day)] = String(version);
+        }
+        return versions;
+      })
+      .catch(() => ({}));
+  }
+  return dayPhotoVersionsPromise;
 }
 
 export function getCurrentStop(tripStartDate: string, now = new Date()): TripStop | null {

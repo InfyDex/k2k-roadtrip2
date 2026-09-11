@@ -5,7 +5,16 @@
   "framework": "vite",
   "headers": [
     {
-      "source": "/days/(.*)",
+      "source": "/days/available.json",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/days/day_:day.jpg",
       "headers": [
         {
           "key": "Cache-Control",
@@ -15,6 +24,6 @@
     }
   ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/((?!days/).*)", "destination": "/index.html" }
   ]
 }

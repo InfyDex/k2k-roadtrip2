@@ -150,14 +150,51 @@ function vitePluginManusDebugCollector(): Plugin {
   };
 }
 
+const DAYS_DIR = path.join(PROJECT_ROOT, "client/public/days");
+const DAY_PHOTO_CACHE = "public, max-age=86400, stale-while-revalidate=604800";
+const DAY_PHOTO_NO_STORE = "no-store";
+
+function listDayPhotos(): Record<string, string> {
+  const versions: Record<string, string> = {};
+  if (!fs.existsSync(DAYS_DIR)) return versions;
+  for (const name of fs.readdirSync(DAYS_DIR)) {
+    const match = /^day_(\d+)\.jpg$/i.exec(name);
+    if (!match) continue;
+    const stat = fs.statSync(path.join(DAYS_DIR, name));
+    versions[match[1]] = `${Math.round(stat.mtimeMs)}-${stat.size}`;
+  }
+  return versions;
+}
+
 function vitePluginDayPhotoCache(): Plugin {
-  const header = "public, max-age=86400, stale-while-revalidate=604800";
-  const apply = (req: { url?: string }, res: { setHeader: (k: string, v: string) => void }, next: () => void) => {
-    if (req.url?.startsWith("/days/")) {
-      res.setHeader("Cache-Control", header);
+  const apply = (
+    req: { url?: string },
+    res: { setHeader: (k: string, v: string) => void; statusCode: number; end: (body?: string) => void },
+    next: () => void,
+  ) => {
+    const url = req.url?.split("?")[0] ?? "";
+    if (url === "/days/available.json") {
+      res.setHeader("Content-Type", "application/json; charset=utf-8");
+      res.setHeader("Cache-Control", DAY_PHOTO_NO_STORE);
+      res.end(JSON.stringify({ versions: listDayPhotos() }));
+      return;
+    }
+    const photo = /^\/days\/day_(\d+)\.jpg$/i.exec(url);
+    if (photo) {
+      const filePath = path.join(DAYS_DIR, `day_${photo[1]}.jpg`);
+      if (fs.existsSync(filePath)) {
+        res.setHeader("Cache-Control", DAY_PHOTO_CACHE);
+        next();
+        return;
+      }
+      res.setHeader("Cache-Control", DAY_PHOTO_NO_STORE);
+      res.statusCode = 404;
+      res.end();
+      return;
     }
     next();
   };
+
   return {
     name: "day-photo-cache",
     configureServer(server) {
@@ -165,6 +202,11 @@ function vitePluginDayPhotoCache(): Plugin {
     },
     configurePreviewServer(server) {
       server.middlewares.use(apply);
+    },
+    closeBundle() {
+      const outDir = path.join(PROJECT_ROOT, "dist/public/days");
+      fs.mkdirSync(outDir, { recursive: true });
+      fs.writeFileSync(path.join(outDir, "available.json"), JSON.stringify({ versions: listDayPhotos() }));
     },
   };
 }

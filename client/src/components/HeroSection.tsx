@@ -2,7 +2,8 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useWebConfig } from "../contexts/WebConfigContext";
-import { getCurrentStop, getDayPhotoUrl } from "@/lib/tripDates";
+import { useDayPhotoUrl } from "@/hooks/useDayPhotoUrl";
+import { getCurrentStop } from "@/lib/tripDates";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -17,18 +18,18 @@ export default function HeroSection() {
 
   const { heroDateRange, tripStartDate } = useWebConfig();
   const currentStop = getCurrentStop(tripStartDate);
+  const { url: currentPhotoUrl } = useDayPhotoUrl(currentStop?.day);
 
   useEffect(() => {
-    if (!currentStop) return;
-    const href = getDayPhotoUrl(currentStop.day);
-    const existing = document.querySelector(`link[rel="preload"][href="${href}"]`);
+    if (!currentPhotoUrl) return;
+    const existing = document.querySelector(`link[rel="preload"][href="${currentPhotoUrl}"]`);
     if (existing) return;
     const link = document.createElement("link");
     link.rel = "preload";
     link.as = "image";
-    link.href = href;
+    link.href = currentPhotoUrl;
     document.head.appendChild(link);
-  }, [currentStop?.day]);
+  }, [currentPhotoUrl]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {

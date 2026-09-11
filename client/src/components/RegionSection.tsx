@@ -3,7 +3,8 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { TripRegion } from "@/lib/tripData";
 import { useWebConfig } from "../contexts/WebConfigContext";
-import { getCurrentStop, getCurrentTripDay, getDayPhotoUrl, getStopDate } from "@/lib/tripDates";
+import { useDayPhotoUrl } from "@/hooks/useDayPhotoUrl";
+import { getCurrentStop, getCurrentTripDay, getStopDate } from "@/lib/tripDates";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -36,9 +37,14 @@ function DayPhoto({
   status: DayStatus;
 }) {
   const [failed, setFailed] = useState(false);
+  const { ready, url } = useDayPhotoUrl(day);
   const opacity = status === "past" ? 0.6 : status === "future" ? 0.38 : 1;
 
-  if (failed) {
+  if (!ready) {
+    return <div className="relative w-full aspect-video rounded-xl overflow-hidden" style={{ opacity }} />;
+  }
+
+  if (failed || !url) {
     return (
       <div
         className="relative w-full aspect-video rounded-xl overflow-hidden flex items-center justify-center"
@@ -59,7 +65,7 @@ function DayPhoto({
   return (
     <div className="relative w-full aspect-video rounded-xl overflow-hidden" style={{ opacity }}>
       <img
-        src={getDayPhotoUrl(day)}
+        src={url}
         alt={`${place}, day ${day}`}
         className={`w-full h-full object-cover ${status === "past" ? "grayscale-[30%]" : ""}`}
         loading={status === "current" ? "eager" : "lazy"}
