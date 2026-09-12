@@ -154,16 +154,53 @@ const DAYS_DIR = path.join(PROJECT_ROOT, "client/public/days");
 const DAY_PHOTO_CACHE = "public, max-age=86400, stale-while-revalidate=604800";
 const DAY_PHOTO_NO_STORE = "no-store";
 
-function listDayPhotos(): Record<string, string> {
-  const versions: Record<string, string> = {};
-  if (!fs.existsSync(DAYS_DIR)) return versions;
+type DayPhotoAsset = { path: string; version: string };
+type DayPhotoEntry = { preview: string; gallery: DayPhotoAsset[] };
+type DayPhotoManifest = { days: Record<string, DayPhotoEntry> };
+
+function fileVersion(filePath: string): string {
+  const stat = fs.statSync(filePath);
+  return `${Math.round(stat.mtimeMs)}-${stat.size}`;
+}
+
+function listGalleryImages(dayDir: string): DayPhotoAsset[] {
+  if (!fs.existsSync(dayDir)) return [];
+  return fs
+    .readdirSync(dayDir)
+    .filter((name) => /\.jpe?g$/i.test(name))
+    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+    .map((name) => {
+      const filePath = path.join(dayDir, name);
+      const day = path.basename(dayDir);
+      return { path: `${day}/${name}`, version: fileVersion(filePath) };
+    });
+}
+
+function buildDayPhotoManifest(): DayPhotoManifest {
+  const days: Record<string, DayPhotoEntry> = {};
+  if (!fs.existsSync(DAYS_DIR)) return { days };
+
   for (const name of fs.readdirSync(DAYS_DIR)) {
-    const match = /^day_(\d+)\.jpg$/i.exec(name);
-    if (!match) continue;
-    const stat = fs.statSync(path.join(DAYS_DIR, name));
-    versions[match[1]] = `${Math.round(stat.mtimeMs)}-${stat.size}`;
+    const previewMatch = /^day_(\d+)\.jpg$/i.exec(name);
+    if (!previewMatch) continue;
+
+    const day = previewMatch[1];
+    const previewPath = path.join(DAYS_DIR, name);
+    const galleryDir = path.join(DAYS_DIR, `day_${day}`);
+    const fullPath = path.join(DAYS_DIR, `day_${day}_full.jpg`);
+
+    let gallery = listGalleryImages(galleryDir);
+    if (gallery.length === 0 && fs.existsSync(fullPath)) {
+      gallery = [{ path: `day_${day}_full.jpg`, version: fileVersion(fullPath) }];
+    }
+    if (gallery.length === 0) {
+      gallery = [{ path: name, version: fileVersion(previewPath) }];
+    }
+
+    days[day] = { preview: fileVersion(previewPath), gallery };
   }
-  return versions;
+
+  return { days };
 }
 
 function vitePluginDayPhotoCache(): Plugin {
@@ -176,13 +213,13 @@ function vitePluginDayPhotoCache(): Plugin {
     if (url === "/days/available.json") {
       res.setHeader("Content-Type", "application/json; charset=utf-8");
       res.setHeader("Cache-Control", DAY_PHOTO_NO_STORE);
-      res.end(JSON.stringify({ versions: listDayPhotos() }));
+      res.end(JSON.stringify(buildDayPhotoManifest()));
       return;
     }
-    const photo = /^\/days\/day_(\d+)\.jpg$/i.exec(url);
+    const photo = /^\/days\/(.+\.jpe?g)$/i.exec(url);
     if (photo) {
-      const filePath = path.join(DAYS_DIR, `day_${photo[1]}.jpg`);
-      if (fs.existsSync(filePath)) {
+      const filePath = path.join(DAYS_DIR, photo[1]);
+      if (fs.existsSync(filePath) && !fs.statSync(filePath).isDirectory()) {
         res.setHeader("Cache-Control", DAY_PHOTO_CACHE);
         next();
         return;
@@ -206,7 +243,7 @@ function vitePluginDayPhotoCache(): Plugin {
     closeBundle() {
       const outDir = path.join(PROJECT_ROOT, "dist/public/days");
       fs.mkdirSync(outDir, { recursive: true });
-      fs.writeFileSync(path.join(outDir, "available.json"), JSON.stringify({ versions: listDayPhotos() }));
+      fs.writeFileSync(path.join(outDir, "available.json"), JSON.stringify(buildDayPhotoManifest()));
     },
   };
 }

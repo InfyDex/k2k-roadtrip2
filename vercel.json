@@ -14,7 +14,7 @@
       ]
     },
     {
-      "source": "/days/day_:day.jpg",
+      "source": "/days/(.*)",
       "headers": [
         {
           "key": "Cache-Control",

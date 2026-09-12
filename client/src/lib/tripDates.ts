@@ -27,29 +27,83 @@ export function getStopDate(tripStartDate: string, day: number): Date | null {
   return stop;
 }
 
-export function getDayPhotoUrl(day: number, version: string): string {
+export type DayPhotoAsset = { path: string; version: string };
+
+export type DayPhotoEntry = {
+  preview: string;
+  gallery: DayPhotoAsset[];
+};
+
+export type DayPhotoManifest = {
+  days?: Record<string, DayPhotoEntry>;
+  /** @deprecated Legacy manifest shape — migrated at read time */
+  versions?: Record<string, string>;
+};
+
+export type DayPhotoCatalog = Record<number, DayPhotoEntry>;
+
+export function getDayPhotoAssetUrl(asset: DayPhotoAsset): string {
+  return `/days/${asset.path}?v=${asset.version}`;
+}
+
+export function getDayPreviewUrl(day: number, version: string): string {
   return `/days/day_${day}.jpg?v=${version}`;
 }
 
-type DayPhotoManifest = { versions?: Record<string, string> };
+/** @deprecated Use getDayPreviewUrl */
+export function getDayPhotoUrl(day: number, version: string): string {
+  return getDayPreviewUrl(day, version);
+}
 
-let dayPhotoVersionsPromise: Promise<Record<number, string>> | null = null;
+function normalizeManifest(data: DayPhotoManifest): DayPhotoCatalog {
+  const catalog: DayPhotoCatalog = {};
 
-/** Fresh list of real day photos. Missing days are placeholders and are never fetched. */
-export function fetchDayPhotoVersions(): Promise<Record<number, string>> {
-  if (!dayPhotoVersionsPromise) {
-    dayPhotoVersionsPromise = fetch("/days/available.json", { cache: "no-store" })
-      .then((res) => (res.ok ? (res.json() as Promise<DayPhotoManifest>) : { versions: {} }))
-      .then((data) => {
-        const versions: Record<number, string> = {};
-        for (const [day, version] of Object.entries(data.versions ?? {})) {
-          versions[Number(day)] = String(version);
-        }
-        return versions;
-      })
+  if (data.days) {
+    for (const [day, entry] of Object.entries(data.days)) {
+      catalog[Number(day)] = entry;
+    }
+    return catalog;
+  }
+
+  for (const [day, version] of Object.entries(data.versions ?? {})) {
+    const path = `day_${day}.jpg`;
+    catalog[Number(day)] = {
+      preview: String(version),
+      gallery: [{ path, version: String(version) }],
+    };
+  }
+
+  return catalog;
+}
+
+let dayPhotoCatalogPromise: Promise<DayPhotoCatalog> | null = null;
+
+/** Fresh catalog of real day photos. Missing days are placeholders and are never fetched. */
+export function fetchDayPhotoCatalog(): Promise<DayPhotoCatalog> {
+  if (!dayPhotoCatalogPromise) {
+    dayPhotoCatalogPromise = fetch("/days/available.json", { cache: "no-store" })
+      .then((res) => (res.ok ? (res.json() as Promise<DayPhotoManifest>) : { days: {} }))
+      .then(normalizeManifest)
       .catch(() => ({}));
   }
-  return dayPhotoVersionsPromise;
+  return dayPhotoCatalogPromise;
+}
+
+/** @deprecated Use fetchDayPhotoCatalog */
+export function fetchDayPhotoVersions(): Promise<Record<number, string>> {
+  return fetchDayPhotoCatalog().then((catalog) => {
+    const versions: Record<number, string> = {};
+    for (const [day, entry] of Object.entries(catalog)) {
+      versions[Number(day)] = entry.preview;
+    }
+    return versions;
+  });
+}
+
+export function getPhotoDays(catalog: DayPhotoCatalog): number[] {
+  return Object.keys(catalog)
+    .map(Number)
+    .sort((a, b) => a - b);
 }
 
 export function getCurrentStop(tripStartDate: string, now = new Date()): TripStop | null {
