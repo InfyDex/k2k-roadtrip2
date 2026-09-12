@@ -152,7 +152,7 @@ function vitePluginManusDebugCollector(): Plugin {
 }
 
 const DAYS_DIR = path.join(PROJECT_ROOT, "client/public/days");
-const DAY_PHOTO_CACHE = "public, max-age=86400, stale-while-revalidate=604800";
+const DAY_PHOTO_CACHE = "public, max-age=31536000, immutable";
 const DAY_PHOTO_NO_STORE = "no-store, no-cache, must-revalidate";
 const DAY_PHOTO_BUILD_ID =
   process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 12) ??
