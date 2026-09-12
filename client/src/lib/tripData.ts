@@ -111,9 +111,9 @@ export const REGIONS: TripRegion[] = [
     stops: [
       { day: 14, place: "Gokarna", state: "Karnataka", region: "south", lat: 14.5479, lng: 74.3188 },
       { day: 15, place: "Kozhikode", state: "Kerala", region: "south", lat: 11.2588, lng: 75.7804 },
-      { day: 16, place: "Alleppey", state: "Kerala", region: "south", lat: 9.4981, lng: 76.3388 },
-      { day: 17, place: "Kochi", state: "Kerala", region: "south", lat: 9.9312, lng: 76.2673 },
-      { day: 18, place: "Alappuzha", state: "Kerala", region: "south", lat: 9.4981, lng: 76.3388 },
+      { day: 16, place: "Kochi", state: "Kerala", region: "south", lat: 9.9312, lng: 76.2673 },
+      { day: 17, place: "Alappuzha", state: "Kerala", region: "south", lat: 9.4981, lng: 76.3388 },
+      { day: 18, place: "Trivandrum", state: "Kerala", region: "south", lat: 8.5241, lng: 76.9366 },
       { day: 19, place: "Kanyakumari", state: "Tamil Nadu", region: "south", lat: 8.0883, lng: 77.5385 },
       { day: 20, place: "Kanyakumari", state: "Tamil Nadu", region: "south", lat: 8.0883, lng: 77.5385 },
     ],
