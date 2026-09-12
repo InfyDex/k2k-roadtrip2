@@ -35,6 +35,8 @@ export type DayPhotoEntry = {
 };
 
 export type DayPhotoManifest = {
+  /** Deploy/build fingerprint — also used to bust manifest CDN cache on fetch */
+  build?: string;
   days?: Record<string, DayPhotoEntry>;
   /** @deprecated Legacy manifest shape — migrated at read time */
   versions?: Record<string, string>;
@@ -78,10 +80,15 @@ function normalizeManifest(data: DayPhotoManifest): DayPhotoCatalog {
 
 let dayPhotoCatalogPromise: Promise<DayPhotoCatalog> | null = null;
 
+const DAY_PHOTO_BUILD = import.meta.env.VITE_DAY_PHOTO_BUILD ?? "dev";
+
 /** Fresh catalog of real day photos. Missing days are placeholders and are never fetched. */
 export function fetchDayPhotoCatalog(): Promise<DayPhotoCatalog> {
   if (!dayPhotoCatalogPromise) {
-    dayPhotoCatalogPromise = fetch("/days/available.json", { cache: "no-store" })
+    dayPhotoCatalogPromise = fetch(`/days/available.json?b=${DAY_PHOTO_BUILD}`, {
+      cache: "no-store",
+      headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
+    })
       .then((res) => (res.ok ? (res.json() as Promise<DayPhotoManifest>) : { days: {} }))
       .then(normalizeManifest)
       .catch(() => ({}));
