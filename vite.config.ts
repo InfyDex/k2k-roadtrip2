@@ -1,6 +1,7 @@
 import { jsxLocPlugin } from "@builder.io/vite-plugin-jsx-loc";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { defineConfig, type Plugin, type ViteDevServer } from "vite";
@@ -152,15 +153,19 @@ function vitePluginManusDebugCollector(): Plugin {
 
 const DAYS_DIR = path.join(PROJECT_ROOT, "client/public/days");
 const DAY_PHOTO_CACHE = "public, max-age=86400, stale-while-revalidate=604800";
-const DAY_PHOTO_NO_STORE = "no-store";
+const DAY_PHOTO_NO_STORE = "no-store, no-cache, must-revalidate";
+const DAY_PHOTO_BUILD_ID =
+  process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 12) ??
+  process.env.VERCEL_DEPLOYMENT_ID?.slice(0, 12) ??
+  "dev";
 
 type DayPhotoAsset = { path: string; version: string };
 type DayPhotoEntry = { preview: string; gallery: DayPhotoAsset[] };
-type DayPhotoManifest = { days: Record<string, DayPhotoEntry> };
+type DayPhotoManifest = { build: string; days: Record<string, DayPhotoEntry> };
 
 function fileVersion(filePath: string): string {
-  const stat = fs.statSync(filePath);
-  return `${Math.round(stat.mtimeMs)}-${stat.size}`;
+  const hash = crypto.createHash("sha256").update(fs.readFileSync(filePath)).digest("hex").slice(0, 12);
+  return `${hash}-${DAY_PHOTO_BUILD_ID}`;
 }
 
 function listGalleryImages(dayDir: string): DayPhotoAsset[] {
@@ -178,7 +183,7 @@ function listGalleryImages(dayDir: string): DayPhotoAsset[] {
 
 function buildDayPhotoManifest(): DayPhotoManifest {
   const days: Record<string, DayPhotoEntry> = {};
-  if (!fs.existsSync(DAYS_DIR)) return { days };
+  if (!fs.existsSync(DAYS_DIR)) return { build: DAY_PHOTO_BUILD_ID, days };
 
   for (const name of fs.readdirSync(DAYS_DIR)) {
     const previewMatch = /^day_(\d+)\.jpg$/i.exec(name);
@@ -200,7 +205,7 @@ function buildDayPhotoManifest(): DayPhotoManifest {
     days[day] = { preview: fileVersion(previewPath), gallery };
   }
 
-  return { days };
+  return { build: DAY_PHOTO_BUILD_ID, days };
 }
 
 function vitePluginDayPhotoCache(): Plugin {
@@ -252,6 +257,9 @@ const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(
 
 export default defineConfig({
   plugins,
+  define: {
+    "import.meta.env.VITE_DAY_PHOTO_BUILD": JSON.stringify(DAY_PHOTO_BUILD_ID),
+  },
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
