@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchDayPhotoVersions, getDayPhotoUrl } from "@/lib/tripDates";
+import { fetchDayPhotoCatalog, getDayPreviewUrl } from "@/lib/tripDates";
 
 export function useDayPhotoUrl(day: number | undefined) {
   const [state, setState] = useState<{ ready: boolean; url: string | null }>({
@@ -14,10 +14,13 @@ export function useDayPhotoUrl(day: number | undefined) {
     }
 
     let live = true;
-    fetchDayPhotoVersions().then((versions) => {
+    fetchDayPhotoCatalog().then((catalog) => {
       if (!live) return;
-      const version = versions[day];
-      setState({ ready: true, url: version ? getDayPhotoUrl(day, version) : null });
+      const entry = catalog[day];
+      setState({
+        ready: true,
+        url: entry ? getDayPreviewUrl(day, entry.preview) : null,
+      });
     });
 
     return () => {

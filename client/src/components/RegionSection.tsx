@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import DayPhoto from "@/components/DayPhoto";
 import type { TripRegion } from "@/lib/tripData";
 import { useWebConfig } from "../contexts/WebConfigContext";
-import { useDayPhotoUrl } from "@/hooks/useDayPhotoUrl";
 import { getCurrentStop, getCurrentTripDay, getStopDate } from "@/lib/tripDates";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -22,66 +22,6 @@ interface RegionSectionProps {
 }
 
 type DayStatus = "past" | "current" | "future";
-
-function DayPhoto({
-  day,
-  place,
-  accent,
-  bg,
-  status,
-}: {
-  day: number;
-  place: string;
-  accent: string;
-  bg: string;
-  status: DayStatus;
-}) {
-  const [failed, setFailed] = useState(false);
-  const { ready, url } = useDayPhotoUrl(day);
-  const opacity = status === "past" ? 0.6 : status === "future" ? 0.38 : 1;
-
-  if (!ready) {
-    return <div className="relative w-full aspect-video rounded-xl overflow-hidden" style={{ opacity }} />;
-  }
-
-  if (failed || !url) {
-    return (
-      <div
-        className="relative w-full aspect-video rounded-xl overflow-hidden flex items-center justify-center"
-        style={{ background: `linear-gradient(135deg, ${accent}33, ${bg})`, opacity }}
-      >
-        <div className="text-center px-4">
-          <div className="font-counter text-3xl sm:text-4xl" style={{ color: accent }}>
-            {String(day).padStart(2, "0")}
-          </div>
-          <div className="font-display font-bold text-sm sm:text-base mt-1" style={{ color: accent }}>
-            {place}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="relative w-full aspect-video rounded-xl overflow-hidden" style={{ opacity }}>
-      <img
-        src={url}
-        alt={`${place}, day ${day}`}
-        className={`w-full h-full object-cover ${status === "past" ? "grayscale-[30%]" : ""}`}
-        loading={status === "current" ? "eager" : "lazy"}
-        fetchPriority={status === "current" ? "high" : "low"}
-        decoding="async"
-        onError={() => setFailed(true)}
-      />
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: `linear-gradient(to top, ${bg}99 0%, transparent 45%)`,
-        }}
-      />
-    </div>
-  );
-}
 
 export default function RegionSection({ region, index }: RegionSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);

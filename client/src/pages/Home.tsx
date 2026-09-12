@@ -12,6 +12,7 @@ import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+import DayPhotoLightbox from "@/components/DayPhotoLightbox";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import IntroSection from "@/components/IntroSection";
@@ -21,6 +22,7 @@ import TeamSection from "@/components/TeamSection";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
 import ProgressIndicator from "@/components/ProgressIndicator";
+import { DayPhotoLightboxProvider } from "@/contexts/DayPhotoLightboxContext";
 import { REGIONS } from "@/lib/tripData";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -53,9 +55,11 @@ export default function Home() {
   }, []);
 
   return (
+    <DayPhotoLightboxProvider>
     <div className="min-h-screen bg-[#0A0A0A] text-white overflow-x-hidden">
       <Navbar />
       <ProgressIndicator />
+      <DayPhotoLightbox />
 
       {/* Hero */}
       <HeroSection />
@@ -82,5 +86,6 @@ export default function Home() {
       {/* Footer */}
       <Footer />
     </div>
+    </DayPhotoLightboxProvider>
   );
 }
