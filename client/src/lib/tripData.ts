@@ -86,7 +86,7 @@ export const REGIONS: TripRegion[] = [
       { day: 6, place: "Palanpur", state: "Gujarat", region: "west", lat: 24.1725, lng: 72.4384 },
       { day: 7, place: "Daman", state: "Daman", region: "west", lat: 20.397, lng: 72.8328 },
       { day: 8, place: "Daman", state: "Daman", region: "west", lat: 20.397, lng: 72.8328 },
-      { day: 9, place: "Thane", state: "Maharashtra", region: "west", lat: 19.2183, lng: 72.9781 },
+      { day: 9, place: "Chiplun", state: "Maharashtra", region: "west", lat: 17.5314, lng: 73.5189 },
       { day: 10, place: "Goa", state: "Goa", region: "west", lat: 15.2993, lng: 74.124 },
       { day: 11, place: "Goa", state: "Goa", region: "west", lat: 15.2993, lng: 74.124 },
       { day: 12, place: "Goa", state: "Goa", region: "west", lat: 15.2993, lng: 74.124 },
