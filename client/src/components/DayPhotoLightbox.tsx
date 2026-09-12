@@ -106,9 +106,10 @@ export default function DayPhotoLightbox() {
   return (
     <Dialog open={!!state} onOpenChange={(openState) => !openState && close()}>
       <DialogContent
+        fullscreen
         showCloseButton={false}
         overlayClassName="bg-black/90"
-        className="data-[state=open]:zoom-in-100 data-[state=closed]:zoom-out-100 fixed inset-0 top-0 left-0 z-50 flex h-[100dvh] w-screen max-w-none translate-x-0 translate-y-0 flex-col gap-0 rounded-none border-0 bg-[#050505]/96 p-0 shadow-none duration-200"
+        className="data-[state=open]:zoom-in-100 data-[state=closed]:zoom-out-100 bg-[#050505]/96"
       >
         <DialogTitle className="sr-only">{title}</DialogTitle>
 
